@@ -1,44 +1,43 @@
 <div align="center">
-<img src="[https://capsule-render.vercel.app/api?type=waving&color=0D1117&height=200&section=header&text=KIT%20Schedule%20PWA&fontSize=50&animation=fadeIn&fontColor=ffffff](https://capsule-render.vercel.app/api?type=waving&color=0D1117&height=200&section=header&text=KIT%20Schedule%20PWA&fontSize=50&animation=fadeIn&fontColor=ffffff)" alt="Header" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=18181b&height=200&section=header&text=KIT%20Schedule%20PWA&fontSize=50&animation=fadeIn&fontColor=ffffff" alt="Header" />
 
-<p align="center">
-<strong>Современное веб-приложение (PWA) для просмотра расписания с полноценной поддержкой оффлайн-режима.</strong>
-</p>
+  <p align="center">
+    <strong>Адаптивное веб-приложение (PWA) для просмотра расписания с поддержкой Offline-first и темной темы.</strong>
+  </p>
 
-<img src="[https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)" alt="HTML5">
-<img src="[https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)" alt="CSS3">
-<img src="[https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)" alt="JavaScript">
-<img src="[https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)" alt="PWA">
-<img src="[https://img.shields.io/badge/JSON-Data-000000?style=for-the-badge&logo=json&logoColor=white](https://img.shields.io/badge/JSON-Data-000000?style=for-the-badge&logo=json&logoColor=white)" alt="JSON">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+  <img src="https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA">
+  <img src="https://img.shields.io/badge/JSON-Data-000000?style=for-the-badge&logo=json&logoColor=white" alt="JSON">
 </div>
 
 ---
 
 ### 🎯 Обзор проекта
 
-**KIT Schedule** — это легковесное клиентское приложение (SPA), предназначенное для быстрого доступа к расписанию занятий. Благодаря технологии **Progressive Web App (PWA)**, приложение работает в браузере как полноценная программа: его можно установить на рабочий стол или экран телефона, и оно продолжит работать даже без доступа к интернету.
+**KIT Schedule PWA** — это клиентское Single Page Application (SPA), обеспечивающее мгновенный доступ к расписанию занятий. Приложение разработано с упором на производительность и автономность: благодаря Service Worker оно кэширует ресурсы и данные, позволяя просматривать расписание даже без подключения к интернету.
 
-Проект ориентирован на учебные заведения (например, КАИ) и позволяет динамически переключаться между расписанием групп, преподавателей и аудиторий.
+Система поддерживает поиск, фильтрацию и сохранение избранных групп, преподавателей и аудиторий в локальном хранилище устройства.
 
 ---
 
 ### 🏗 Архитектура системы
 
-В проекте реализована логика **Offline-First**. Service Worker перехватывает запросы и отдает закэшированные ресурсы, если сеть недоступна:
+В проекте реализована стратегия **Cache-First** (для статики) и **Stale-While-Revalidate** (для данных), что обеспечивает мгновенную загрузку:
 
 ```mermaid
 graph TD
     User((Пользователь)) -->|Открывает| UI[Интерфейс PWA]
-    UI <-->|Запрос ресурсов| SW[Service Worker (sw.js)]
+    UI <-->|Запрос данных| SW[Service Worker (sw.js)]
 
     subgraph "Уровень данных"
-    SW <-->|Кэширование| Cache[Local Cache Storage]
-    SW -.->|Обновление| Server((Web Server))
+    SW <-->|Кэширование| Cache[Cache Storage]
+    SW -.->|Фоновое обновление| JSON[schedule.json]
     end
     
-    UI -->|Парсинг| JS[script.js]
-    JS -->|Загрузка| Data[schedule.json]
-    Data -->|Рендер| DOM[HTML Generation]
+    UI -->|Logic & Render| JS[script.js]
+    JS <-->|Сохранение настроек| LS[LocalStorage]
 
 ```
 
@@ -46,21 +45,27 @@ graph TD
 
 ### 🔥 Ключевые возможности
 
-* **Offline-First & PWA:**
-* **Installable:** Установка на iOS, Android и Desktop через браузер.
-* **Service Worker:** Мгновенная загрузка оболочки и работа в режиме полета.
+* **Three Operation Modes:**
+* `GROUPS` — Расписание для студентов (поиск по номеру группы).
+* `TEACHERS` — Расписание для преподавателей.
+* `ROOMS` — Загруженность аудиторий.
 
 
-* **Гибкое управление данными:**
-* **Three View Modes:** Просмотр расписания для Студентов, Преподавателей и Аудиторий.
-* **Dual Calendar:** Переключение между отображением "По неделям" (статичное) и "По датам" (календарный вид).
-* **Week Toggle:** Поддержка четных и нечетных недель.
+* **Smart Navigation & UI:**
+* **Swipe Gestures:** Переключение между днями свайпом влево/вправо.
+* **View Modes:** Переключение между "Неделей" (Пн-Сб) и "Датами" (календарный список).
+* **Dark Theme:** Глубокая интеграция темной темы (`#09090b`) для экономии заряда OLED-экранов.
 
 
-* **Умный UX:**
-* **Search & Track:** Быстрый поиск по базе и сохранение выбранных групп/преподавателей в "Избранное" (LocalStorage).
-* **Swipe Navigation:** Листание дней недели с помощью жестов (свайпов).
-* **Dark Theme:** Современный темный интерфейс с акцентными цветами для разных типов занятий (Лекции, Лабораторные, Практики).
+* **Offline Capabilities:**
+* **Service Worker:** Полное кэширование JS, CSS и ассетов.
+* **Installable:** Поддержка установки на домашний экран (Manifest V2).
+* **Auto-Update:** Версионирование кэша (`schedule-app-dev-v33`) для обновления без перезагрузки.
+
+
+* **Data Management:**
+* **Favorites:** Списки "Избранного" хранятся локально на устройстве пользователя.
+* **Week Parity:** Автоматическое определение четной/нечетной недели.
 
 
 
@@ -68,18 +73,19 @@ graph TD
 
 ### 🛠 Технический стек
 
-* **Core:** Vanilla JavaScript (ES6+), HTML5, CSS3 (Modern Flexbox/Grid).
-* **PWA Features:** Web App Manifest (`manifest.json`), Service Workers API.
-* **Data Source:** Локальный JSON-файл с поддержкой сложной структуры занятий.
-* **Styling:** Кастомные CSS-переменные для легкой смены тем оформления.
+* **Core:** Vanilla JavaScript (ES6+), HTML5
+* **Styling:** CSS3 Variables, Flexbox/Grid, Mobile-First
+* **PWA:** Service Worker API, Web App Manifest
+* **Storage:** LocalStorage API (User prefs), Cache API (Assets)
+* **Data Source:** Static JSON
 
 ---
 
 ### 🚀 Быстрый запуск
 
-#### 1. Предварительная настройка
+#### 1. Структура данных
 
-Клонируйте репозиторий. Настройте файл `schedule.json`, заполнив его данными в следующем формате:
+Для работы приложения необходим файл `schedule.json` в корневой директории со следующей структурой:
 
 ```json
 {
@@ -88,7 +94,14 @@ graph TD
       {
         "dayId": 0,
         "lessons": [
-          { "time": "08:00 - 09:30", "subject": "Математика", "type": "ЛЕК", "room": "401", "teacher": "Иванов И.И.", "dates": "все" }
+           { 
+             "time": "08:00 - 09:30", 
+             "subject": "Физика", 
+             "type": "ЛЕК", 
+             "room": "301", 
+             "teacher": "Иванов А.А.", 
+             "dates": "все" 
+           }
         ]
       }
     ]
@@ -99,19 +112,32 @@ graph TD
 
 ```
 
-#### 2. Запуск приложения
+#### 2. Запуск локально
 
-Для работы PWA и Service Worker требуется **HTTPS** или **localhost**. Используйте любой локальный сервер:
+Так как используются Service Workers, приложению требуется контекст безопасности (HTTPS или localhost).
 
-* **Python:** `python3 -m http.server 8000`
-* **Node.js:** `npx http-server .`
-* **VS Code:** Расширение *Live Server*.
+**Вариант А (Python):**
 
-#### 3. Установка
+```bash
+python3 -m http.server 8080
+# Открыть http://localhost:8080
 
-1. Откройте `http://localhost:8000` в браузере (рекомендуется Chrome или Safari).
-2. Нажмите на иконку «Добавить на главный экран» в адресной строке или меню браузера.
-3. Теперь приложение доступно в списке ваших программ и работает оффлайн!
+```
+
+**Вариант Б (Node.js):**
+
+```bash
+npx http-server .
+# Открыть http://localhost:8080
+
+```
+
+#### 3. Использование
+
+1. Откройте приложение в браузере.
+2. Нажмите **"+ Добавить"** на главном экране.
+3. Введите номер группы (например, `4434`) или фамилию преподавателя.
+4. (Опционально) Нажмите "Поделиться" -> "На экран 'Домой'" для установки PWA.
 
 ---
 
