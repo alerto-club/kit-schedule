@@ -29,7 +29,7 @@
 ```mermaid
 graph TD
     User((Пользователь)) -->|Открывает| UI[Интерфейс PWA]
-    UI <-->|Запрос данных| SW[Service Worker (sw.js)]
+    UI <-->|Запрос данных| SW["Service Worker (sw.js)"]
 
     subgraph "Уровень данных"
     SW <-->|Кэширование| Cache[Cache Storage]
